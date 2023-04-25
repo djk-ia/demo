@@ -8,7 +8,7 @@
 		<version>2.7.11-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>net.atos</groupId>
+	<groupId>net.</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Demo-cicde</name>

@@ -1,53 +1,19 @@
-def project_token = 'abcdefghijklmnopqrstuvwxyz0123456789ABCDEF'
-def teams_webhooks_url = "https://atos365.webhook.office.com/webhookb2/8e77e7f9-7832-4097-be1b-6bd9c184b984@33440fc6-b7c7-412c-bb73-0e70b0198d5a/IncomingWebhook/e357e52acfbc43b38118c84d79e18929/0167722f-7496-46d8-b167-5784eb3afd18"
-properties([
-    gitLabConnection('si_connection'),
-    pipelineTriggers([
-        [
-            $class: 'GitLabPushTrigger',
-            branchFilterType: 'All',
-            triggerOnPush: true,
-            triggerOnMergeRequest: true,
-            triggerOpenMergeRequestOnPush: "never",
-            triggerOnNoteRequest: true,
-            noteRegex: "Jenkins please retry a build",
-            skipWorkInProgressMergeRequest: true,
-            secretToken: project_token,
-            ciSkip: false,
-            setBuildDescription: true,
-            addNoteOnMergeRequest: true,
-            addCiMessage: true,
-            addVoteOnMergeRequest: true,
-            acceptMergeRequestOnSuccess: true,
-            branchFilterType: "NameBasedFilter",
-            includeBranchesSpec: "",
-            excludeBranchesSpec: "",
-        ]
-    ])
-])
+def project_token = '....'
+def webhooks_url = "..."
 
 pipeline{
     agent any
     options {
-		office365ConnectorWebhooks([[
-			name: "JenkinsTeamsConnector", 
-            url: "${teams_webhooks_url}",
-            startNotification: true, 
-            notifyBackToNormal: true, 
-            notifyFailure: true, 
-            notifyRepeatedFailure: true, 
-            notifySuccess: true, 
-            notifyAborted: true
-		]])
+		
 	}
     environment {
-        USER_NAME = 'ibrahima.diop'
-         imageName = "demo-demo"
+        USER_NAME = '...'
+         imageName = "demo-dit"
          dockerImageVersion = 'SNAPSHOT-1.0.0'
          repo = "${JOB_NAME}"
-         DOCKER_REGISTRY_USER= 'karimux'
-         DOCKER_REGISTRY_USER_PASSWORD= 'Adama7812@%!'
-         TOKEN_SONAR= '49b46dcd7429cb158d6c9ac968365ace9ab62ef9'
+         DOCKER_REGISTRY_USER= '...'
+         DOCKER_REGISTRY_USER_PASSWORD= '...'
+         TOKEN_SONAR= '...'
         }
     tools {
         maven 'maven'
@@ -57,7 +23,7 @@ pipeline{
 
             stage('SCM Checkout') {
               steps {
-                 git(branch: 'main', credentialsId: 'gitlab',  url:'${GITLAB_URL}/demo/demo')                   
+                 git(branch: 'main', credentialsId: 'gitlab',  url:'localhost')                   
               }
          }
            stage('Check Packages'){
@@ -68,7 +34,7 @@ pipeline{
 
               stage('SonarQube analysis') {
                   steps{
-                  withSonarQubeEnv(credentialsId: 'sonar', installationName:"SonarForgeAtos") {
+                  withSonarQubeEnv(credentialsId: 'sonar', installationName:"Sonar") {
                       sh 'mvn sonar:sonar -Dsonar.host.url=${SONARQUBE_URL} -Dsonar.login=${TOKEN_SONAR}'
                     }
                 }
@@ -85,7 +51,7 @@ pipeline{
                     ]
                 ],
                 credentialsId: 'nexus',
-                groupId: 'net-atos',
+                groupId: 'demo-dit',
                 nexusUrl: '${NEXUS_URL}',
                 nexusVersion: 'nexus3',
                 protocol: 'http',
@@ -138,12 +104,12 @@ pipeline{
                         }
                             /*		post {
    			 failure {
-       			 mail to: ''+"${env.USER_NAME}"+'@atos.net,ibrahima.diop@atos.net,abdou.mbengue@atos.net',
+       			 mail to: ' edjiky@gmail.com ',
              		subject: "**Failed Pipeline**: ${currentBuild.fullDisplayName}",
              		body: "Something is wrong with ${env.BUILD_URL}"
     }
              success{
-                mail to: ''+"${env.USER_NAME}"+'@atos.net,ibrahima.diop@atos.net,abdou.mbengue@atos.net',
+                mail to: ' edjiky@gmail.com ',
                  subject: "**Success Pipeline**:${currentBuild.fullDisplayName}",
            		    body: "Success of your build, here is the link of the build ${env.BUILD_URL}"
                         }
